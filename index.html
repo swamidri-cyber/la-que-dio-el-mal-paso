@@ -250,6 +250,57 @@ h3 { font-family: var(--display); font-weight: 400; font-size: 1.75rem; line-hei
 .ingredientes { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.2rem; padding: 0; list-style: none; }
 .ingredientes li { font-size: .82rem; letter-spacing: .03em; padding: .4rem .85rem .3rem; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
 
+/* Curso: bloque en oliva dentro de la página clara */
+.curso-box {
+  --c-bg: #605f4b; --c-ink: #f3efe4; --c-soft: #d9d4c3; --c-line: rgba(243, 239, 228, .18);
+  background: var(--c-bg); color: var(--c-ink);
+  border-radius: var(--r-block);
+  padding: 2.2rem 1.4rem;
+  display: grid; gap: 3rem;
+  position: relative; overflow: hidden; isolation: isolate;
+}
+@media (min-width: 768px) { .curso-box { padding: 3.5rem; } }
+@media (min-width: 1024px) { .curso-box { grid-template-columns: .95fr 1.05fr; gap: 4.5rem; padding: 4.5rem; } }
+.curso-box .deco { position: absolute; width: 220px; right: -60px; top: -50px; color: var(--c-ink); opacity: .07; z-index: -1; }
+.curso-box .eyebrow { color: #e3b79f; }
+.curso-box h2 { color: var(--c-ink); max-width: 16ch; }
+.curso-box .desc { color: var(--c-soft); max-width: 46ch; margin: 0 0 2rem; }
+.datos { display: flex; flex-wrap: wrap; gap: 1.6rem 2.4rem; margin: 0 0 2.2rem; padding: 0; list-style: none; }
+.datos b { display: block; font-family: var(--display); font-weight: 400; font-size: 2.4rem; line-height: 1; color: var(--c-ink); }
+.datos span { font-size: .9rem; color: var(--c-soft); }
+.bonos { display: grid; gap: .8rem; margin: 0 0 2.4rem; }
+.bono { display: flex; gap: 1rem; align-items: center; padding: 1rem 1.2rem; border-radius: 14px; background: rgba(243, 239, 228, .08); border: 1px solid var(--c-line); }
+.bono i { font-size: 1.6rem; color: #e3b79f; }
+.bono strong { display: block; font-weight: 600; }
+.bono small { color: var(--c-soft); font-size: .88rem; }
+.curso-box .btn-primary { background: #efebe0; color: #45443a; }
+.curso-box .btn-primary:hover { background: #fff8ec; }
+.acceso { margin: 1.1rem 0 0; font-size: .9rem; color: var(--c-soft); max-width: 44ch; display: flex; gap: .6rem; }
+.acceso i { font-size: 1.1rem; margin-top: 2px; }
+
+.modulos { display: grid; gap: .7rem; align-content: start; }
+.modulo { border-radius: 16px; background: rgba(243, 239, 228, .06); border: 1px solid var(--c-line); }
+.modulo summary {
+  list-style: none; cursor: pointer;
+  display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
+  padding: 1.15rem 1.3rem 1rem;
+}
+.modulo summary::-webkit-details-marker { display: none; }
+.modulo summary h3 { font-size: 1.35rem; margin: 0; color: var(--c-ink); }
+.modulo summary span { font-size: .85rem; color: var(--c-soft); white-space: nowrap; }
+.modulo summary span i { transition: transform .35s cubic-bezier(.16,1,.3,1); display: inline-block; margin-left: .4rem; vertical-align: -2px; }
+.modulo.is-open summary span i { transform: rotate(180deg); }
+.modulo { transition: background-color .4s, border-color .4s; }
+.modulo.is-open { background: rgba(243, 239, 228, .1); }
+.modulo summary:hover h3 { color: #fff8ec; }
+.modulo ol { margin: 0; padding: 0 1.3rem 1.2rem 1.3rem; list-style: none; counter-reset: c; }
+.modulo li { counter-increment: c; display: flex; gap: .8rem; align-items: center; padding: .55rem 0; color: var(--c-soft); font-size: .98rem; }
+.modulo li + li { border-top: 1px solid var(--c-line); }
+.modulo li i { color: #e3b79f; font-size: 1.15rem; }
+.modulo summary:focus-visible { outline-color: #e3b79f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .curso-box { --c-bg: #3a392e; } }
+:root[data-theme="dark"] .curso-box { --c-bg: #3a392e; }
+
 /* Manifiesto / historia */
 .manifiesto { text-align: center; }
 .manifiesto .mark { width: 56px; color: var(--terra); margin: 0 auto 2rem; display: block; }
@@ -335,6 +386,7 @@ footer .redes a:hover { background: var(--terra-strong); color: var(--on-accent)
     <nav aria-label="Principal">
       <ul>
         <li><a href="#productos">Productos</a></li>
+        <li><a href="#curso">Curso</a></li>
         <li><a href="#historia">Historia</a></li>
         <li><a href="#ritual">Cómo usarlos</a></li>
       </ul>
@@ -353,7 +405,7 @@ footer .redes a:hover { background: var(--terra-strong); color: var(--on-accent)
         <p class="lead reveal" style="--i:2">Aromas naturales elaborados en nuestro taller de Rosario, con yuyos, pétalos y esencias nobles.</p>
         <div class="actions reveal" style="--i:3">
           <a class="btn btn-primary" href="#productos">Ver sahumerios <i class="ph ph-arrow-down-right"></i></a>
-          <a class="btn btn-ghost" href="#historia">Nuestra historia</a>
+          <a class="btn btn-ghost" href="#curso">Conocé el curso</a>
         </div>
       </div>
       <div class="hero-art reveal" style="--i:2">
@@ -408,6 +460,68 @@ footer .redes a:hover { background: var(--terra-strong); color: var(--on-accent)
           </div>
           <i class="mark m-isotipo" aria-hidden="true"></i>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="curso" style="padding-top:0">
+    <div class="wrap">
+      <div class="curso-box reveal">
+        <i class="mark m-isotipo deco" aria-hidden="true"></i>
+        <div>
+          <span class="eyebrow">Curso online</span>
+          <h2>Curso integral de sahumerios artesanales</h2>
+          <p class="desc">Aprendé a hacer sahumerios desde cero: materiales, fórmulas, perfumado, color y formas. Con herramientas para calcular costos y emprender.</p>
+          <ul class="datos">
+            <li><b>11</b><span>clases en video</span></li>
+            <li><b>4</b><span>técnicas</span></li>
+            <li><b>2</b><span>bonos descargables</span></li>
+          </ul>
+          <div class="bonos">
+            <div class="bono"><i class="ph ph-table"></i><div><strong>Planilla de costos</strong><small>Para calcular el precio de cada producto.</small></div></div>
+            <div class="bono"><i class="ph ph-book-open-text"></i><div><strong>Guía del taller</strong><small>Para organizar tu espacio y tu producción.</small></div></div>
+          </div>
+          <a class="btn btn-primary" href="https://pay.hotmart.com/Y107802995Y" target="_blank" rel="noopener">Comprar curso <i class="ph ph-arrow-up-right"></i></a>
+          <p class="acceso"><i class="ph ph-lock-simple"></i>Pagás en Hotmart y te llega por mail el acceso a tu cuenta, donde ves las clases cuando quieras.</p>
+        </div>
+        <div class="modulos">
+          <details class="modulo" open>
+            <summary><h3>Técnica por inmersión</h3><span>3 clases<i class="ph ph-caret-down"></i></span></summary>
+            <ol>
+              <li><i class="ph ph-play-circle"></i>Presentación inmersión</li>
+              <li><i class="ph ph-play-circle"></i>Preparación de la masa</li>
+              <li><i class="ph ph-play-circle"></i>Sahumerios por inmersión</li>
+            </ol>
+          </details>
+          <details class="modulo">
+            <summary><h3>Técnica por extrusión</h3><span>4 clases<i class="ph ph-caret-down"></i></span></summary>
+            <ol>
+              <li><i class="ph ph-play-circle"></i>Extrusión</li>
+              <li><i class="ph ph-play-circle"></i>Extrusión formas</li>
+              <li><i class="ph ph-play-circle"></i>Extrusión masa natural</li>
+              <li><i class="ph ph-play-circle"></i>Extrusión natural</li>
+            </ol>
+          </details>
+          <details class="modulo">
+            <summary><h3>Técnica de amasado</h3><span>2 clases<i class="ph ph-caret-down"></i></span></summary>
+            <ol>
+              <li><i class="ph ph-play-circle"></i>Amasado</li>
+              <li><i class="ph ph-play-circle"></i>Amasado 2</li>
+            </ol>
+          </details>
+          <details class="modulo">
+            <summary><h3>Perfume y color</h3><span>1 clase<i class="ph ph-caret-down"></i></span></summary>
+            <ol>
+              <li><i class="ph ph-play-circle"></i>Perfume y color</li>
+            </ol>
+          </details>
+          <details class="modulo">
+            <summary><h3>Despedida</h3><span>1 clase<i class="ph ph-caret-down"></i></span></summary>
+            <ol>
+              <li><i class="ph ph-play-circle"></i>Despedida y entrega de bonos</li>
+            </ol>
+          </details>
+        </div>
       </div>
     </div>
   </section>
@@ -509,6 +623,51 @@ footer .redes a:hover { background: var(--terra-strong); color: var(--on-accent)
       });
     }, { threshold: 0.18, rootMargin: "0px 0px -40px 0px" });
     els.forEach(function (e) { io.observe(e); });
+  })();
+
+  // Temario: abre y cierra con movimiento suave, de a un módulo por vez
+  (function () {
+    var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var ease = "cubic-bezier(.16, 1, .3, 1)";
+    var mods = Array.prototype.slice.call(document.querySelectorAll(".modulo"));
+    mods.forEach(function (d) { if (d.open) d.classList.add("is-open"); });
+
+    function set(d, opening) {
+      var s = d.querySelector("summary"), body = d.querySelector("ol");
+      if (d._anim) d._anim.cancel();
+      d.classList.toggle("is-open", opening);
+      if (reduce) { d.open = opening; return; }
+      var start = d.offsetHeight;
+      d.style.overflow = "hidden";
+      d.style.height = start + "px";
+      if (opening) d.open = true;
+      var border = d.offsetHeight - d.clientHeight;
+      var end = s.offsetHeight + border + (opening ? body.offsetHeight : 0);
+      d._anim = d.animate({ height: [start + "px", end + "px"] }, { duration: opening ? 520 : 380, easing: ease });
+      d._anim.onfinish = function () {
+        d.open = opening;
+        d.style.height = d.style.overflow = "";
+        d._anim = null;
+      };
+      d._anim.oncancel = function () { d.style.height = d.style.overflow = ""; };
+      if (opening) {
+        body.querySelectorAll("li").forEach(function (li, i) {
+          li.animate(
+            { opacity: [0, 1], transform: ["translateY(-8px)", "translateY(0)"] },
+            { duration: 420, delay: 90 + i * 60, easing: ease, fill: "backwards" }
+          );
+        });
+      }
+    }
+
+    mods.forEach(function (d) {
+      d.querySelector("summary").addEventListener("click", function (e) {
+        e.preventDefault();
+        var opening = !d.classList.contains("is-open");
+        if (opening) mods.forEach(function (o) { if (o !== d && o.classList.contains("is-open")) set(o, false); });
+        set(d, opening);
+      });
+    });
   })();
 
   // Modo claro / oscuro (respeta el sistema hasta que se elija uno)

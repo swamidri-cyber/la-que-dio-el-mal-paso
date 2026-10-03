@@ -1,0 +1,23 @@
+{
+  "name": "Aprendé jugando · La que dió el mal paso",
+  "short_name": "Aprendé",
+  "description": "Aprendé jugando todo sobre sahumerios artesanales: recetas, técnicas, perfume, color, aromas e intenciones.",
+  "lang": "es-AR",
+  "id": "./",
+  "start_url": "./#inicio",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#efebe0",
+  "theme_color": "#efebe0",
+  "categories": ["education", "games"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Repaso inteligente", "short_name": "Repaso", "url": "./#repaso", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Tu progreso", "short_name": "Progreso", "url": "./#progreso", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

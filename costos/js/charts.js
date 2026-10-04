@@ -42,8 +42,8 @@
     }
     const lines =
       `<line x1="${x(0)}" y1="${y(o.F)}" x2="${x(qMax)}" y2="${y(o.F)}" stroke="var(--sage)" stroke-width="1.5" stroke-dasharray="4 4"/>` +
-      `<line x1="${x(0)}" y1="${y(cos(0))}" x2="${x(qMax)}" y2="${y(cos(qMax))}" stroke="var(--c-gas)" stroke-width="2.5" stroke-linecap="round"/>` +
-      `<line x1="${x(0)}" y1="${y(0)}" x2="${x(qMax)}" y2="${y(ing(qMax))}" stroke="var(--c-ing)" stroke-width="2.5" stroke-linecap="round"/>`;
+      `<line x1="${x(0)}" y1="${y(cos(0))}" x2="${x(qMax)}" y2="${y(cos(qMax))}" stroke="var(--c-gas)" stroke-width="2.5" stroke-linecap="round" class="draw" pathLength="1"/>` +
+      `<line x1="${x(0)}" y1="${y(0)}" x2="${x(qMax)}" y2="${y(ing(qMax))}" stroke="var(--c-ing)" stroke-width="2.5" stroke-linecap="round" class="draw" pathLength="1"/>`;
 
     let marks = '';
     if (o.actual > 0 && o.actual <= qMax) {
@@ -77,7 +77,7 @@
     const y = v => H - pad - ((v - min) / span) * (H - pad * 2);
     const d = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.v).toFixed(1)).join('');
     const dots = pts.map((p, i) => `<g data-tip="${esc('<b>' + esc(p.label) + '</b><br>' + p.tip)}"><circle class="hit" cx="${x(i)}" cy="${y(p.v)}" r="12"/><circle cx="${x(i)}" cy="${y(p.v)}" r="3.5" fill="var(--terra-strong)"/></g>`).join('');
-    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución del precio"><path d="${d}" fill="none" stroke="var(--terra)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${dots}</svg><div class="tip" hidden></div></div>`;
+    return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolución del precio"><path d="${d}" fill="none" stroke="var(--terra)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" class="draw" pathLength="1"/>${dots}</svg><div class="tip" hidden></div></div>`;
   }
 
   /** Tooltips: tocar/pasar el dedo o el mouse sobre una marca */

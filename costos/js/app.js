@@ -66,12 +66,58 @@
   const dlgStack = [];
   let ignorePop = 0;
   function openDlg(d) {
+    if (d._finishClose) d._finishClose();
     if (d.open) return;
+    d.style.transform = '';
     d.showModal();
     dlgStack.push(d);
     history.pushState({ dlg: dlgStack.length }, '');
   }
-  function closeDlg(d) { if (d.open) d.close(); }
+  /** Cierra con animación de salida (deslizándose hacia abajo o achicándose) */
+  function closeDlg(d) {
+    if (!d.open || d._finishClose) return;
+    if (calm()) { d.close(); return; }
+    let done = false;
+    d._finishClose = () => {
+      if (done) return;
+      done = true;
+      d._finishClose = null;
+      d.classList.remove('closing');
+      d.style.transform = '';
+      if (d.open) d.close();
+    };
+    d.classList.add('closing');
+    d.addEventListener('animationend', d._finishClose, { once: true });
+    setTimeout(d._finishClose, 420);
+  }
+
+  /* Hojas: se pueden cerrar arrastrándolas hacia abajo desde el encabezado */
+  $$('dialog.sheet').forEach(d => {
+    const head = $('.sheet__head', d);
+    let y0 = null, dy = 0, t0 = 0;
+    head.style.touchAction = 'none';
+    head.addEventListener('pointerdown', e => {
+      if (e.target.closest('button') || window.matchMedia('(min-width: 600px)').matches) return;
+      y0 = e.clientY; dy = 0; t0 = performance.now();
+      d.classList.add('dragging');
+      head.setPointerCapture(e.pointerId);
+    });
+    head.addEventListener('pointermove', e => {
+      if (y0 == null) return;
+      dy = Math.max(0, e.clientY - y0);
+      d.style.transform = `translateY(${dy}px)`;
+    });
+    const end = () => {
+      if (y0 == null) return;
+      y0 = null;
+      d.classList.remove('dragging');
+      const fast = dy / Math.max(1, performance.now() - t0) > 0.6;
+      if (dy > 120 || (fast && dy > 30)) closeDlg(d);
+      else d.style.transform = '';
+    };
+    head.addEventListener('pointerup', end);
+    head.addEventListener('pointercancel', end);
+  });
   $$('dialog').forEach(d => {
     d.addEventListener('close', () => {
       const i = dlgStack.lastIndexOf(d);
@@ -93,7 +139,7 @@
   window.addEventListener('popstate', () => {
     if (ignorePop) { ignorePop--; return; }
     const top = dlgStack.pop();
-    if (top && top.open) top.close();
+    if (top && top.open) closeDlg(top); // ya no está en la pila: no vuelve a tocar el historial
   });
 
   function confirmBox(title, text, okLabel, danger) {
@@ -175,10 +221,10 @@
     param = param ? decodeURIComponent(param) : null;
     if (!VIEWS.includes(view)) view = 'inicio';
     if (view === 'producto' && !producto(param)) { view = 'productos'; param = null; }
-    if (view === 'herramientas') {
-      if (param && TOOLS.some(t => t[0] === param)) S.t.tool = param;
-    }
     const changed = view !== S.view || param !== S.param;
+    const prevView = S.view, prevTool = S.t.tool;
+    const sameTools = view === 'herramientas' && prevView === 'herramientas';
+    if (view === 'herramientas' && param && TOOLS.some(t => t[0] === param)) S.t.tool = param;
     S.view = view; S.param = param;
     document.body.dataset.view = view;
     VIEWS.forEach(v => { $('#view-' + v).hidden = v !== view; });
@@ -187,12 +233,46 @@
       if (a.dataset.view === tab) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
     });
+    $('.tabs').style.setProperty('--tab', ['inicio', 'insumos', 'productos', 'herramientas', 'taller'].indexOf(tab));
     $('#btnBack').hidden = view !== 'producto';
     $('#topMark').hidden = view === 'producto';
     $('#fab').hidden = !(view === 'insumos' || view === 'productos');
     $('#fab').setAttribute('aria-label', view === 'insumos' ? 'Agregar insumo' : 'Agregar producto');
     render();
-    if (changed) window.scrollTo(0, 0);
+    if (!changed) return;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (sameTools) {
+      const ti = k => TOOLS.findIndex(t => t[0] === k);
+      animateIn($('#toolBody'), ti(S.t.tool) >= ti(prevTool) ? 'fwd' : 'back');
+    } else {
+      animateIn($('#view-' + view), (ORDER[view] || 0) >= (ORDER[prevView] || 0) ? 'fwd' : 'back');
+    }
+  }
+
+  /* ---------------- Movimiento ---------------- */
+  const ORDER = { inicio: 0, insumos: 1, productos: 2, producto: 2.5, herramientas: 3, taller: 4 };
+  const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /** Entrada de una pantalla: los bloques llegan deslizándose uno detrás de otro */
+  function animateIn(el, dir) {
+    if (!el || calm()) return;
+    el.classList.remove('enter-fwd', 'enter-back');
+    [...el.children].forEach((c, i) => c.style.setProperty('--i', Math.min(i, 10)));
+    void el.offsetWidth;
+    el.classList.add('enter-' + dir);
+    clearTimeout(el._enterT);
+    el._enterT = setTimeout(() => el.classList.remove('enter-fwd', 'enter-back'), 1400);
+    $$('[data-count]', el).forEach(countUp);
+  }
+  /** Los montos grandes cuentan desde cero */
+  function countUp(el) {
+    const end = +el.dataset.count, noCents = el.dataset.nocents === '1';
+    const t0 = performance.now(), dur = 750;
+    const step = t => {
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = money(end * e, { noCents });
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
   window.addEventListener('hashchange', go);
   $('#btnBack').addEventListener('click', () => { location.hash = '#productos'; });
@@ -215,7 +295,7 @@
     Charts.bindTips($('#view-' + v));
   }
   /** Re-render que no salta arriba de la página */
-  function refresh() { const y = window.scrollY; render(); window.scrollTo(0, y); }
+  function refresh() { const y = window.scrollY; render(); window.scrollTo({ top: y, behavior: 'instant' }); }
 
   /* ---------------- Estados de precio ---------------- */
   const ESTADOS = {
@@ -297,7 +377,7 @@
     } else {
       hero = `<div class="hero">
         <p class="eyebrow">Ganancia estimada por mes</p>
-        <p class="hero__value num">${money(T.ganancia, { noCents: true })}</p>
+        <p class="hero__value num" data-count="${Math.round(T.ganancia)}" data-nocents="1">${money(T.ganancia, { noCents: true })}</p>
         <p class="hero__sub">Con ${num(T.unidades, 0)} unidades al mes · ${num(T.horas, 1)} h de trabajo${S.taller.valorHora ? ' (tu sueldo de ' + money(T.manoObraMes, { noCents: true }) + ' ya está descontado)' : ''}</p>
         <div class="hero__split">
           <div><p class="lbl">Facturás</p><p class="val num">${money(T.facturacion, { noCents: true })}</p></div>
@@ -677,7 +757,7 @@
     el.innerHTML = `
       <div class="hero">
         <p class="eyebrow">Te cuesta hacer cada unidad</p>
-        <p class="hero__value num">${money(r.costoTotal)}</p>
+        <p class="hero__value num" data-count="${r.costoTotal}">${money(r.costoTotal)}</p>
         <p class="hero__sub">Tanda de ${num(r.rinde)} ${plural(r.rinde, 'unidad', 'unidades')}: ${money(r.costoTotal * r.rinde)} · ${num(horas, 2)} h de trabajo</p>
         <div class="hero__split">
           <div><p class="lbl">Precio minorista</p><p class="val num">${r.canales.min.precio ? money(r.canales.min.precio, { noCents: true }) : '—'}</p></div>
@@ -761,7 +841,7 @@
     const ins = insumo(it.insumoId);
     const units = ins ? compatibles(ins.unidad) : ['u'];
     const opts = S.insumos.slice().sort(byName).map(i => `<option value="${esc(i.id)}"${i.id === it.insumoId ? ' selected' : ''}>${esc(i.nombre)}</option>`).join('');
-    return `<div class="rec" data-idx="${idx}">
+    return `<div class="rec${idx === editProd.nuevo ? ' rec--new' : ''}" data-idx="${idx}">
       <label class="field rec__ins"><span class="sr">Insumo</span>
         <select data-f="insumoId"><option value="">Elegí un insumo…</option>${opts}</select></label>
       <label class="field rec__cant"><span class="sr">Cantidad</span>
@@ -854,7 +934,9 @@
   $('#pAddItem').addEventListener('click', () => {
     if (!S.insumos.length) { toast('Primero cargá insumos'); return; }
     editProd.items.push({ insumoId: '', cantidad: null, unidad: 'g', por: 'tanda' });
+    editProd.nuevo = editProd.items.length - 1;
     renderItems(); updPreview();
+    editProd.nuevo = null;
     const sels = $$('.rec select[data-f="insumoId"]', $('#pItems'));
     sels[sels.length - 1].focus();
   });

@@ -1,0 +1,23 @@
+{
+  "name": "Costos y precios · La que dió el mal paso",
+  "short_name": "Costos",
+  "description": "Costos, precios, ganancias y punto de equilibrio de tus productos. Todo queda guardado en el celular.",
+  "lang": "es-AR",
+  "id": "./",
+  "start_url": "./#inicio",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#efebe0",
+  "theme_color": "#efebe0",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Mis productos", "short_name": "Productos", "url": "./#productos", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Insumos", "short_name": "Insumos", "url": "./#insumos", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

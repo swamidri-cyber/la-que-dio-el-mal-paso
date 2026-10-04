@@ -1,0 +1,206 @@
+/* Costos y precios — estilos propios (sobre base.css, que comparte paleta y tipografías con la web) */
+
+.mt { margin-top: 14px; }
+.center { justify-content: center; }
+.help { font-size: .875rem; color: var(--muted); margin-top: 6px; }
+.help b { color: var(--ink-soft); }
+.calc-line { margin-top: 10px; padding: 10px 14px; border-radius: 14px; background: var(--surface); font-size: .9375rem; color: var(--ink-soft); }
+.calc-line:empty { display: none; }
+.form-sub { font-size: 1.15rem; margin: 22px 0 6px; }
+.card > .form-sub:first-child { margin-top: 0; }
+.tbl th:first-child, .tbl td:first-child { text-transform: none; }
+.tbl td:first-child { overflow-wrap: anywhere; }
+.plain { margin: 6px 0 0; padding-left: 18px; }
+.plain li { margin-top: 4px; }
+a.link { display: inline; }
+.top__brand .back { width: 40px; height: 40px; }
+.top__title { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.top__brand > div { min-width: 0; }
+.hero__value--sm { font-size: 1.9rem; }
+.hero .link, .hero a { color: inherit; }
+
+/* Bienvenida */
+.welcome { text-align: left; }
+.welcome > .mark { width: 54px; height: 54px; color: var(--terra); display: block; margin-bottom: 8px; }
+.welcome h2 { font-size: 2rem; }
+.welcome > p { margin-top: 8px; }
+.steps { margin: 14px 0 0; padding-left: 22px; }
+.steps li { margin-top: 8px; padding-left: 4px; }
+.steps li::marker { font-family: var(--display); color: var(--terra-strong); font-size: 1.2em; }
+
+/* Stat tiles como enlace */
+a.stat { text-decoration: none; color: inherit; display: block; }
+
+/* Barra de avance */
+.meter { height: 12px; border-radius: 6px; background: var(--surface); overflow: hidden; margin-top: 12px; }
+.meter__fill { height: 100%; border-radius: 6px; background: var(--c-ing); }
+.meter__fill--warn { background: var(--c-gas); }
+.meter + .small { margin-top: 6px; }
+
+/* Insignias de estado */
+.badge {
+  display: inline-flex; align-items: center; white-space: nowrap;
+  font-size: .75rem; font-weight: 600; letter-spacing: .03em;
+  padding: 3px 10px; border-radius: var(--r-pill);
+  background: var(--surface); color: var(--ink-soft);
+}
+.badge--ok { background: color-mix(in srgb, var(--c-ing) 20%, transparent); color: var(--pos); }
+.badge--warn { background: var(--warn-bg); color: var(--warn-ink); }
+.badge--bad { background: var(--bad-bg); color: var(--bad-ink); }
+
+/* Alertas en inicio */
+.alert-list { list-style: none; margin: 0; padding: 0; }
+.alert-list li + li { border-top: 1px solid var(--line); }
+.alert-list a { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 0; text-decoration: none; color: inherit; }
+.alert-list__name { font-weight: 600; min-width: 0; }
+.alert-list__txt { grid-column: 1 / -1; font-size: .875rem; color: var(--muted); }
+.ok-card p { color: var(--pos); font-weight: 600; }
+
+/* Listas de insumos y productos */
+.group-title { font-family: var(--sans); font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 20px 4px 4px; font-weight: 600; }
+.item {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 12px 14px; min-height: 64px; margin-top: 8px;
+  border: 0; border-radius: 16px; text-align: left;
+  background: var(--card); color: inherit; text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+.item__main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.item__title { font-weight: 600; }
+.item__meta { font-size: .8125rem; color: var(--muted); }
+.item__side { text-align: right; font-size: .875rem; color: var(--ink-soft); flex: none; max-width: 45%; }
+.item__side b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* Hojas */
+.sheet--wide { max-width: 640px; }
+.more { margin-top: 14px; background: var(--surface); border-radius: 16px; padding: 0 14px; }
+.more summary { min-height: 48px; display: flex; align-items: center; font-weight: 600; cursor: pointer; list-style: none; color: var(--terra-strong); }
+.more summary::-webkit-details-marker { display: none; }
+.more summary::after { content: "▾"; margin-left: auto; color: var(--muted); transition: transform .2s; }
+.more[open] summary::after { transform: rotate(180deg); }
+.more[open] { padding-bottom: 14px; }
+.more .field input, .more .field select { background: var(--card); }
+.preview { margin-top: 18px; background: var(--surface); border-radius: 16px; padding: 4px 14px; }
+.preview:empty { display: none; }
+
+/* Receta: insumo + quitar arriba; cantidad, unidad y tanda/unidad abajo */
+.rec { display: grid; grid-template-columns: 1.1fr .8fr 1.3fr 44px; gap: 8px; padding: 12px 0; border-top: 1px solid var(--line); }
+.rec:first-child { border-top: 0; }
+.rec__ins { grid-column: 1 / 4; grid-row: 1; }
+.rec__del { grid-column: 4; grid-row: 1; align-self: center; }
+.rec__cant { grid-column: 1; grid-row: 2; }
+.rec__u { grid-column: 2; grid-row: 2; }
+.rec__por { grid-column: 3 / 5; grid-row: 2; }
+.rec__cost { grid-column: 1 / -1; grid-row: 3; margin-top: -2px; }
+.rec__cost:empty { display: none; }
+.rec .field select { padding: 0 8px; }
+
+/* Actualizar precios */
+.bulk-all { display: flex; align-items: flex-end; gap: 10px; margin-top: 12px; }
+.bulk-all .field { flex: 1; }
+.bulk-row { display: grid; grid-template-columns: 1fr 130px; gap: 2px 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+.bulk-row:first-child { border-top: 0; margin-top: 8px; }
+.bulk-row__name { display: flex; flex-direction: column; min-width: 0; }
+.bulk-row input { text-align: right; }
+.bulk-row__delta { grid-column: 2; text-align: right; font-weight: 600; }
+.bulk-row__delta:empty { display: none; }
+
+/* Pares etiqueta/valor */
+.kv { margin: 6px 0 0; }
+.kv > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+.kv > div:last-child { border-bottom: 0; }
+.kv dt { color: var(--ink-soft); font-size: .9375rem; min-width: 0; }
+.kv dd { margin: 0; font-weight: 600; text-align: right; }
+.kv__sum { border-bottom-style: solid !important; }
+.kv__sum dt { color: var(--ink); font-weight: 600; }
+.kv--legend dt { display: flex; align-items: center; gap: 8px; }
+.kv--legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+
+/* Barra apilada de costo */
+.stack { display: flex; height: 18px; border-radius: 9px; overflow: hidden; background: var(--surface); gap: 2px; }
+.stack span { display: block; height: 100%; min-width: 3px; }
+
+/* Precios por canal */
+.canales { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 640px) { .canales { grid-template-columns: 1fr 1fr; } }
+.canal { background: var(--bg); border-radius: 18px; padding: 14px; min-width: 0; }
+.canal__head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.canal .field input { background: var(--card); font-size: 1.25rem; font-weight: 600; }
+.sug { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; padding: 10px 12px; border-radius: 14px; background: var(--surface); font-size: .875rem; color: var(--ink-soft); }
+.sug__val { font-family: var(--display); font-size: 1.5rem; font-weight: 400; color: var(--ink); }
+
+/* Explicaciones */
+.explica { margin-top: 10px; border-top: 1px solid var(--line); }
+.explica summary { min-height: 44px; display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none; color: var(--terra-strong); font-weight: 600; font-size: .9375rem; }
+.explica summary::-webkit-details-marker { display: none; }
+.explica summary::before {
+  content: "?"; flex: none; width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center; font-size: .75rem;
+  border: 1.5px solid currentColor;
+}
+.explica p { font-size: .9375rem; color: var(--ink-soft); padding: 0 0 12px 30px; }
+.card > .explica:first-of-type { margin-top: 14px; }
+
+/* Navegación de herramientas */
+.toolnav { display: flex; gap: 8px; overflow-x: auto; padding: 6px 2px 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; }
+.toolnav::-webkit-scrollbar { display: none; }
+.toolnav a {
+  flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px;
+  border-radius: var(--r-pill); border: 1px solid var(--line); text-decoration: none;
+  font-size: .9375rem; color: var(--ink-soft); background: var(--card);
+}
+.toolnav a[aria-current] { background: var(--olive); color: #f6f3ea; border-color: var(--olive); font-weight: 600; }
+:root[data-theme="dark"] .toolnav a[aria-current] { background: var(--tan); color: #22221b; border-color: var(--tan); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .toolnav a[aria-current] { background: var(--tan); color: #22221b; border-color: var(--tan); } }
+
+.tbl--cmp td:nth-child(3) { color: var(--ink); }
+.tbl--costos td:first-child { text-align: left; }
+.tbl__total td { font-weight: 700; border-bottom: 0; }
+
+/* Ranking */
+.ranking { list-style: none; margin: 0; padding: 0; }
+.ranking li { padding: 10px 0; border-top: 1px solid var(--line); }
+.ranking li:first-child { border-top: 0; }
+.ranking a { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+.ranking__pos { font-family: var(--display); font-size: 1.4rem; color: var(--terra-strong); width: 24px; flex: none; }
+.ranking__name { flex: 1; min-width: 0; font-weight: 600; }
+.ranking .hbar__track { margin-left: 34px; }
+.ranking .hbar__meta { margin-left: 34px; }
+
+/* Combos */
+.cb-row { display: grid; grid-template-columns: 1fr 76px 44px; gap: 8px; align-items: center; margin-top: 8px; }
+
+/* Límites de descuento */
+.limits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.limit { border-radius: 16px; padding: 12px 14px; }
+.limit--ok { background: color-mix(in srgb, var(--c-ing) 16%, transparent); }
+.limit--bad { background: var(--bad-bg); color: var(--bad-ink); }
+.limit__lbl { font-size: .8125rem; font-weight: 600; }
+.limit__val { font-family: var(--display); font-size: 2rem; line-height: 1.2; }
+
+.about .m-wordmark { width: 200px; height: 70px; }
+
+/* ---------- Ficha para imprimir ---------- */
+.ficha { display: none; }
+@media print {
+  @page { margin: 16mm; }
+  body { padding: 0; background: #fff; color: #222; font-size: 11pt; }
+  body::after { display: none; }
+  body > *:not(#ficha) { display: none !important; }
+  .ficha { display: block; }
+  .ficha__head { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #bb7458; padding-bottom: 10px; margin-bottom: 12px; }
+  .ficha__head .mark { width: 120px; height: 46px; color: #bb7458; flex: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .ficha__kicker { font-size: 9pt; letter-spacing: .12em; text-transform: uppercase; color: #605f4b; }
+  .ficha h1 { font-family: var(--display); font-size: 22pt; font-weight: 400; margin: 0; }
+  .ficha h2 { font-family: var(--display); font-size: 14pt; font-weight: 400; margin: 16px 0 6px; color: #605f4b; }
+  .ficha table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+  .ficha th, .ficha td { padding: 5px 6px; border-bottom: 1px solid #ddd; text-align: right; }
+  .ficha th:first-child, .ficha td:first-child { text-align: left; }
+  .ficha th { font-size: 8.5pt; text-transform: uppercase; letter-spacing: .05em; color: #605f4b; }
+  .ficha .tot td { font-weight: 700; border-top: 1.5px solid #605f4b; }
+  .ficha__note { font-size: 9.5pt; color: #555; margin-top: 8px; }
+}
+
+/* En el detalle de producto el nombre puede ser largo */
+body[data-view="producto"] .top__title { font-size: 1.45rem; }
+body[data-view="producto"] .top__kicker { display: none; }

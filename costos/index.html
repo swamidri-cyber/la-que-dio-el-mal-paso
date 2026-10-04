@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Costos y precios</title>
+  <meta name="description" content="Calculá costos, precios, ganancias y punto de equilibrio de tus productos. Todo queda guardado en tu celular.">
+  <meta name="theme-color" content="#efebe0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#22221b" media="(prefers-color-scheme: dark)">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Costos">
+  <link rel="preload" href="fonts/josefin-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="marks.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <a class="skip" href="#main">Saltar al contenido</a>
+
+  <header class="top">
+    <div class="top__brand">
+      <button class="icon-btn back" id="btnBack" type="button" aria-label="Volver" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <span class="mark m-isotipo" id="topMark" aria-hidden="true"></span>
+      <div>
+        <p class="top__kicker">La que dió el mal paso</p>
+        <h1 class="top__title" id="viewTitle">Inicio</h1>
+      </div>
+    </div>
+    <button class="icon-btn" id="btnTheme" type="button" aria-label="Cambiar tema claro u oscuro">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+    </button>
+  </header>
+
+  <div id="banners" class="wrap"></div>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <section class="view" id="view-inicio" data-title="Inicio"></section>
+    <section class="view" id="view-insumos" data-title="Insumos" hidden></section>
+    <section class="view" id="view-productos" data-title="Productos" hidden></section>
+    <section class="view" id="view-producto" data-title="Producto" hidden></section>
+    <section class="view" id="view-herramientas" data-title="Herramientas" hidden></section>
+    <section class="view" id="view-taller" data-title="Mi taller" hidden></section>
+  </main>
+
+  <button class="fab" id="fab" type="button" aria-label="Agregar" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <nav class="tabs" aria-label="Secciones">
+    <a href="#inicio" data-view="inicio" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      Inicio
+    </a>
+    <a href="#insumos" data-view="insumos">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 14h9"/></svg>
+      Insumos
+    </a>
+    <a href="#productos" data-view="productos">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+      Productos
+    </a>
+    <a href="#herramientas" data-view="herramientas">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>
+      Números
+    </a>
+    <a href="#taller" data-view="taller">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg>
+      Mi taller
+    </a>
+  </nav>
+
+  <!-- Insumo -->
+  <dialog class="sheet" id="dlgInsumo" aria-labelledby="dlgInsumoTitle">
+    <form method="dialog" id="formInsumo" novalidate>
+      <div class="sheet__head">
+        <h2 id="dlgInsumoTitle">Nuevo insumo</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <label class="field mt">
+        <span>Nombre</span>
+        <input id="iNombre" required maxlength="80" placeholder="Ej: Esencia de lavanda" autocomplete="off">
+      </label>
+      <div class="grid2">
+        <label class="field">
+          <span>Precio que pagaste</span>
+          <input id="iPrecio" inputmode="decimal" placeholder="$ 0" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Cantidad que trae</span>
+          <input id="iCantidad" inputmode="decimal" placeholder="Ej: 1000" autocomplete="off">
+        </label>
+      </div>
+      <fieldset class="chips-field">
+        <legend>Unidad</legend>
+        <div class="seg" role="radiogroup" aria-label="Unidad del paquete" id="iUnidad">
+          <button type="button" role="radio" aria-checked="true" data-v="g">g</button>
+          <button type="button" role="radio" aria-checked="false" data-v="kg">kg</button>
+          <button type="button" role="radio" aria-checked="false" data-v="ml">ml</button>
+          <button type="button" role="radio" aria-checked="false" data-v="l">l</button>
+          <button type="button" role="radio" aria-checked="false" data-v="u">unid.</button>
+        </div>
+      </fieldset>
+      <p class="calc-line" id="iCalc" aria-live="polite"></p>
+      <div class="grid2">
+        <label class="field">
+          <span>Categoría (opcional)</span>
+          <input id="iCategoria" list="catsInsumo" maxlength="40" placeholder="Ej: Esencias" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Proveedor (opcional)</span>
+          <input id="iProveedor" maxlength="60" autocomplete="off">
+        </label>
+      </div>
+      <datalist id="catsInsumo"></datalist>
+      <label class="field mt">
+        <span>Fecha del precio</span>
+        <input id="iFecha" type="date">
+      </label>
+      <div id="iHistorial"></div>
+      <p class="hint err" id="iErr" role="alert"></p>
+      <div class="sheet__actions">
+        <button class="btn btn--danger-ghost" type="button" id="iBorrar" hidden>Borrar</button>
+        <button class="btn btn--primary btn--wide" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Producto -->
+  <dialog class="sheet sheet--wide" id="dlgProducto" aria-labelledby="dlgProductoTitle">
+    <form method="dialog" id="formProducto" novalidate>
+      <div class="sheet__head">
+        <h2 id="dlgProductoTitle">Nuevo producto</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <label class="field mt">
+        <span>Nombre</span>
+        <input id="pNombre" required maxlength="80" placeholder="Ej: Sahumerio de varilla, caja x 10" autocomplete="off">
+      </label>
+      <div class="grid2">
+        <label class="field">
+          <span>¿Cuántas unidades salen por tanda?</span>
+          <input id="pRinde" inputmode="decimal" placeholder="Ej: 20" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Desperdicio / merma (%)</span>
+          <input id="pMerma" inputmode="decimal" placeholder="0" autocomplete="off">
+        </label>
+      </div>
+      <p class="help">La <b>tanda</b> es lo que hacés de una vez. La <b>merma</b> es lo que se pierde (masa que sobra, varillas que se rompen): se suma al costo de los materiales.</p>
+
+      <h3 class="form-sub">Receta</h3>
+      <p class="help">Elegí cada insumo y cuánto usás. Marcá si es <b>por tanda</b> (ej: 600 g de masa para toda la tanda) o <b>por unidad</b> (ej: 1 bolsa y 1 etiqueta por paquete).</p>
+      <div id="pItems"></div>
+      <button class="btn btn--ghost btn--sm mt" type="button" id="pAddItem">+ Agregar insumo</button>
+
+      <h3 class="form-sub">Tu trabajo</h3>
+      <div class="grid2">
+        <label class="field">
+          <span>Horas por tanda</span>
+          <input id="pHoras" inputmode="numeric" placeholder="0" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Minutos</span>
+          <input id="pMinutos" inputmode="numeric" placeholder="0" autocomplete="off">
+        </label>
+      </div>
+      <p class="help">Contá todo: preparar, armar, secar, envolver, etiquetar.</p>
+
+      <h3 class="form-sub">Ventas y precios</h3>
+      <div class="grid2">
+        <label class="field">
+          <span>Precio minorista</span>
+          <input id="pPrecioMin" inputmode="decimal" placeholder="$ 0" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Precio mayorista</span>
+          <input id="pPrecioMay" inputmode="decimal" placeholder="$ 0" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Vendés por mes (minorista)</span>
+          <input id="pVentasMin" inputmode="decimal" placeholder="unidades" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Vendés por mes (mayorista)</span>
+          <input id="pVentasMay" inputmode="decimal" placeholder="unidades" autocomplete="off">
+        </label>
+      </div>
+      <p class="help">Si todavía no tenés precio, dejalo vacío: la app te sugiere uno. Las ventas por mes son una estimación: sirven para repartir los costos fijos.</p>
+
+      <details class="more mt">
+        <summary>Ganancia buscada para este producto</summary>
+        <div class="seg" role="radiogroup" aria-label="Cómo calcular el precio" id="pModo">
+          <button type="button" role="radio" aria-checked="true" data-v="">Como en Mi taller</button>
+          <button type="button" role="radio" aria-checked="false" data-v="margen">Margen</button>
+          <button type="button" role="radio" aria-checked="false" data-v="markup">Markup</button>
+        </div>
+        <div class="grid2">
+          <label class="field">
+            <span>% minorista</span>
+            <input id="pObjMin" inputmode="decimal" placeholder="igual que el taller" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>% mayorista</span>
+            <input id="pObjMay" inputmode="decimal" placeholder="igual que el taller" autocomplete="off">
+          </label>
+        </div>
+      </details>
+
+      <div class="preview" id="pPreview" aria-live="polite"></div>
+      <p class="hint err" id="pErr" role="alert"></p>
+      <div class="sheet__actions">
+        <button class="btn btn--primary btn--wide" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Actualizar precios en bloque -->
+  <dialog class="sheet sheet--wide" id="dlgBulk" aria-labelledby="dlgBulkTitle">
+    <form method="dialog" id="formBulk" novalidate>
+      <div class="sheet__head">
+        <h2 id="dlgBulkTitle">Actualizar precios</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <p class="help">Cambiá los precios que subieron. Al guardar, se recalculan todos tus productos y queda registrado en el historial.</p>
+      <div class="bulk-all">
+        <label class="field">
+          <span>Subir todos un…</span>
+          <input id="bPct" inputmode="decimal" placeholder="Ej: 8 %" autocomplete="off">
+        </label>
+        <button class="btn btn--ghost btn--sm" type="button" id="bApply">Aplicar</button>
+      </div>
+      <div id="bList"></div>
+      <div class="sheet__actions">
+        <button class="btn btn--primary btn--wide" type="submit">Guardar cambios</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Costo fijo -->
+  <dialog class="modal" id="dlgFijo" aria-labelledby="dlgFijoTitle">
+    <form method="dialog" id="formFijo" novalidate>
+      <h2 id="dlgFijoTitle">Costo fijo</h2>
+      <label class="field mt">
+        <span>Nombre</span>
+        <input id="fNombre" maxlength="60" placeholder="Ej: Alquiler del taller" autocomplete="off">
+      </label>
+      <label class="field mt">
+        <span>Monto por mes</span>
+        <input id="fMonto" inputmode="decimal" placeholder="$ 0" autocomplete="off">
+      </label>
+      <p class="help">Si lo pagás cada tanto (ej: la feria cada 15 días, o algo anual), cargá cuánto es en un mes.</p>
+      <p class="hint err" id="fErr" role="alert"></p>
+      <div class="modal__actions">
+        <button class="btn btn--danger-ghost" type="button" id="fBorrar" hidden>Borrar</button>
+        <button class="btn btn--ghost" type="button" data-close>Cancelar</button>
+        <button class="btn btn--primary" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Medio de cobro -->
+  <dialog class="modal" id="dlgMedio" aria-labelledby="dlgMedioTitle">
+    <form method="dialog" id="formMedio" novalidate>
+      <h2 id="dlgMedioTitle">Medio de cobro</h2>
+      <label class="field mt">
+        <span>Nombre</span>
+        <input id="mNombre" maxlength="50" placeholder="Ej: Mercado Pago" autocomplete="off">
+      </label>
+      <label class="field mt">
+        <span>Comisión total (%)</span>
+        <input id="mPct" inputmode="decimal" placeholder="Ej: 7,61" autocomplete="off">
+      </label>
+      <p class="help">Sumá la comisión, el IVA de la comisión y cualquier retención que te descuenten.</p>
+      <p class="hint err" id="mErr" role="alert"></p>
+      <div class="modal__actions">
+        <button class="btn btn--danger-ghost" type="button" id="mBorrar" hidden>Borrar</button>
+        <button class="btn btn--ghost" type="button" data-close>Cancelar</button>
+        <button class="btn btn--primary" type="submit">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Confirmación -->
+  <dialog class="modal" id="dlgConfirm" aria-labelledby="dlgConfirmTitle">
+    <form method="dialog">
+      <h2 id="dlgConfirmTitle">¿Seguro?</h2>
+      <p id="dlgConfirmText"></p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" value="cancel" type="button">Cancelar</button>
+        <button class="btn btn--danger" id="dlgConfirmOk" type="button">Sí, borrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <input type="file" id="fileImport" accept="application/json,.json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Ficha para imprimir / PDF -->
+  <article id="ficha" class="ficha" aria-hidden="true"></article>
+
+  <script src="js/format.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

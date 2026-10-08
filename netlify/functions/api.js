@@ -6,8 +6,13 @@ import video from "../../api/video.js";
 import bono from "../../api/bono.js";
 import comprar from "../../api/comprar.js";
 import webhookMercadopago from "../../api/webhook-mercadopago.js";
+import pedido from "../../api/pedido.js";
+import paypalCrear from "../../api/paypal-crear.js";
+import paypalCapturar from "../../api/paypal-capturar.js";
+import admin from "../../api/admin.js";
 
-const RUTAS = { estado, config: configApi, video, bono, comprar, "webhook-mercadopago": webhookMercadopago };
+const RUTAS = { estado, config: configApi, video, bono, comprar, "webhook-mercadopago": webhookMercadopago,
+  pedido, "paypal-crear": paypalCrear, "paypal-capturar": paypalCapturar, admin };
 
 export default async (request) => {
   const url = new URL(request.url);

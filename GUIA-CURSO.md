@@ -25,19 +25,24 @@ Hacé los pasos en este orden. Cada clave que copies va a parar al paso 5.
 3. **Authentication > URL Configuration**:
    - *Site URL*: `https://laquedioelmalpaso.com/curso/`
    - *Redirect URLs*: agregá `https://laquedioelmalpaso.com/curso/` y `https://*.netlify.app/curso/`
-4. **Authentication > Emails > Templates > Magic Link**: reemplazá el texto por algo así
-   (lo importante es `{{ .Token }}`, que es el código de 6 números):
+4. **Mails de verdad (hacelo antes de tocar las plantillas)**: Supabase no deja editar
+   el texto de los mails hasta que conectes tu propio servicio de correo, y el que trae
+   de fábrica manda muy pocos mails por hora.
+   - Creá una cuenta gratis en <https://resend.com> y verificá tu dominio `laquedioelmalpaso.com`
+     (Resend te dice qué registros DNS agregar donde compraste el dominio).
+   - En Resend: **API Keys > Create API Key** y copiala.
+   - En Supabase: **Authentication > Emails**, tocá **Set up SMTP** y cargá:
+     host `smtp.resend.com`, puerto `465`, usuario `resend`, contraseña: la API Key de Resend.
+     Remitente: `curso@laquedioelmalpaso.com`, nombre: `La que dió el mal paso`.
+5. **Authentication > Emails > Templates > Magic Link** (recién ahora se puede editar).
+   Reemplazá el texto por algo así; lo importante es `{{ .Token }}`, que es el código de 6 números:
    ```html
    <h2>Tu acceso al curso</h2>
    <p><a href="{{ .ConfirmationURL }}">Tocá acá para entrar al aula</a></p>
    <p>O escribí este código en la página: <b>{{ .Token }}</b></p>
    ```
    Hacé lo mismo en la plantilla **Invite user**, que es el mail que llega después de comprar.
-5. **Mails de verdad (importante)**: el correo que trae Supabase de fábrica manda
-   muy pocos mails por hora, alcanza sólo para probar. Antes de vender:
-   - Creá una cuenta gratis en <https://resend.com> y verificá tu dominio `laquedioelmalpaso.com`.
-   - En Supabase: **Authentication > Emails > SMTP Settings**, activá *Custom SMTP* y cargá
-     los datos que te da Resend. Remitente: `curso@laquedioelmalpaso.com`.
+   Si Zen te muestra "no puede abrir esta página" en la vista previa, ignoralo: es sólo la vista previa.
 6. **Storage > bonos**: subí los dos bonos **con estos nombres exactos**:
    - `planilla-de-costos.xlsx`
    - `guia-del-taller.pdf`
@@ -72,6 +77,29 @@ Hacé los pasos en este orden. Cada clave que copies va a parar al paso 5.
    - Evento: **Pagos**
    - Guardá y copiá la **clave secreta** que aparece.
 
+## 3b. Otras formas de pago (opcionales)
+
+Cada una aparece en la página sólo si cargás sus variables en el paso 5.
+
+**Transferencia bancaria.** No hace falta ninguna cuenta nueva: sólo tu alias o CBU.
+Quien compra ve los datos, transfiere y sube el comprobante. Vos lo aprobás en el panel
+`laquedioelmalpaso.com/curso/admin/` y le llega el mail para entrar.
+
+**PayPal (pagos desde el exterior, en dólares).**
+1. Creá una cuenta **Business** en <https://www.paypal.com/ar/business>.
+2. Entrá a <https://developer.paypal.com> > **Apps & Credentials**, elegí **Live** y
+   tocá **Create App**. Copiá el **Client ID** y el **Secret** (es secreto).
+3. Ojo: desde Argentina, la plata de PayPal no se pasa directo a un banco argentino.
+   Se retira con servicios como Takenos, Payoneer o una cuenta en el exterior.
+
+**Cripto (USDT).** Necesitás una billetera que reciba USDT (Binance, Lemon, Belo, etc.).
+Copiá tu dirección de depósito de USDT **y fijate en qué red está** (TRC20 / Tron es la
+más barata). Quien paga pega el código de la transacción; vos revisás en tu billetera
+que haya llegado y lo aprobás en el panel.
+
+**Aviso por mail cuando llega un comprobante** (recomendado si usás transferencia o cripto):
+con la misma cuenta de Resend del paso 1, creá otra API Key y cargala en `RESEND_API_KEY`.
+
 ## 4. Netlify (alojamiento)
 
 1. Entrá a <https://netlify.com> con tu cuenta de GitHub.
@@ -88,6 +116,8 @@ variables (están también en `.env.example`):
 |---|---|
 | `SITE_URL` | Mientras probás, la dirección `https://algo.netlify.app`. Después, `https://laquedioelmalpaso.com` |
 | `CURSO_PRECIO` | Precio en pesos, sólo el número. Ej: `25000` |
+| `CURSO_PRECIO_USD` | Precio en dólares para PayPal y cripto. Ej: `30` |
+| `ADMIN_EMAILS` | `laquedioelmalpaso2020@gmail.com` (quién puede usar el panel) |
 | `SUPABASE_URL` | Project URL de Supabase |
 | `SUPABASE_ANON_KEY` | Clave anon public |
 | `SUPABASE_SERVICE_ROLE_KEY` | Clave service_role (secreta) |
@@ -95,6 +125,13 @@ variables (están también en `.env.example`):
 | `MP_WEBHOOK_SECRET` | Clave secreta del webhook |
 | `BUNNY_LIBRARY_ID` | Library ID de Bunny |
 | `BUNNY_TOKEN_KEY` | Token Authentication Key de Bunny |
+| `TRANSFERENCIA_ALIAS` / `TRANSFERENCIA_CBU` | Tu alias y CBU/CVU |
+| `TRANSFERENCIA_TITULAR` / `TRANSFERENCIA_BANCO` | Nombre del titular y banco o billetera |
+| `PAYPAL_CLIENT_ID` / `PAYPAL_SECRET` | Credenciales Live de PayPal (el Secret es secreto) |
+| `CRIPTO_DIRECCION` / `CRIPTO_RED` | Dirección USDT y su red, ej. `TRC20 (Tron)` |
+| `RESEND_API_KEY` / `AVISOS_EMAIL` | Para que te llegue un mail con cada comprobante |
+
+Las formas de pago cuyas variables dejes vacías simplemente no aparecen.
 
 Después: **Deploys > Trigger deploy** para que las tome.
 
@@ -123,7 +160,9 @@ Después: **Deploys > Trigger deploy** para que las tome.
 ## 8. Alumnos que ya compraron en Hotmart
 
 1. Hotmart: **Ventas > Historial de ventas**, filtrá el curso y exportá a Excel.
-2. Con los mails, en Supabase, *SQL Editor*:
+2. Entrá a `laquedioelmalpaso.com/curso/admin/`, pegá todos los mails en **Dar acceso a mano**
+   (uno por línea), elegí **Compró en Hotmart** y tocá **Dar acceso**. A cada uno le llega
+   el mail para entrar. También se puede por SQL en Supabase:
    ```sql
    insert into public.alumnos (email, origen) values
      ('alguien@gmail.com', 'hotmart'),
@@ -137,6 +176,10 @@ Después: **Deploys > Trigger deploy** para que las tome.
 ---
 
 ## Cosas del día a día
+
+Casi todo se hace desde el panel **`laquedioelmalpaso.com/curso/admin/`**: aprobar
+transferencias y cripto, dar o quitar acceso y ver los últimos alumnos. Si entrás al aula
+con tu mail de administradora, arriba aparece el enlace **Panel**.
 
 - **Dar acceso a mano** (regalo, pago por transferencia): el `insert` del paso 8 con `'manual'`.
 - **Sacar el acceso**: `delete from public.alumnos where email = 'mail@x.com';`

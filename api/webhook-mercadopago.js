@@ -3,7 +3,7 @@
 // y sólo si está aprobado y por el monto correcto damos de alta al alumno.
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { CURSO } from "../lib/curso.js";
-import { env, manejar, normalizarEmail, responder, sitio, supabaseAdmin } from "../lib/servidor.js";
+import { darAcceso, env, manejar, normalizarEmail, responder } from "../lib/servidor.js";
 
 export default manejar(async (req, res) => {
   if (req.method !== "POST") return responder(res, 405, { error: "Método no permitido." });
@@ -32,20 +32,7 @@ export default manejar(async (req, res) => {
     return responder(res, 200, { ignorado: true });
   }
 
-  const sb = supabaseAdmin();
-  const { data: previo } = await sb.from("alumnos").select("email").eq("email", email).maybeSingle();
-  const { error } = await sb.from("alumnos").upsert(
-    { email, origen: "mercadopago", pago_id: id, monto: pago.transaction_amount },
-    { onConflict: "email" }
-  );
-  if (error) throw error;
-
-  // Mail de bienvenida con el enlace para entrar, sólo la primera vez.
-  // Si la persona ya tenía cuenta, Supabase lo rechaza y no pasa nada: entra con su mail como siempre.
-  if (!previo) {
-    const inv = await sb.auth.admin.inviteUserByEmail(email, { redirectTo: sitio() + "/curso/" });
-    if (inv.error) console.info("Invitación no enviada a", email, inv.error.message);
-  }
+  await darAcceso(email, "mercadopago", { pago_id: id, monto: pago.transaction_amount });
   responder(res, 200, { ok: true });
 });
 

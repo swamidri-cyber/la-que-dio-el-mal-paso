@@ -43,7 +43,7 @@ async function api(ruta, opciones = {}) {
   const headers = Object.assign({ "Content-Type": "application/json" }, t ? { Authorization: "Bearer " + t } : {});
   const r = await fetch(ruta, Object.assign({}, opciones, { headers }));
   const datos = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(datos.error || "Algo falló. Probá de nuevo.");
+  if (!r.ok) throw Object.assign(new Error(datos.error || "Algo falló. Probá de nuevo."), { datos });
   return datos;
 }
 
@@ -53,10 +53,12 @@ async function cargar() {
   $("[data-mail]").textContent = u ? u.email : "";
   $("[data-mail]").hidden = !u;
   $$("[data-salir]").forEach((b) => (b.hidden = !u));
+  $("[data-link-admin]").hidden = !(u && u.admin);
 
   if (!u) return pintarEntrar();
   if (!u.alumno) {
     $("[data-mail-actual]").textContent = u.email;
+    $("[data-comprar-actual]").hidden = false;
     return vista("sin-acceso");
   }
   pintarAula();
@@ -79,11 +81,9 @@ function pintarEntrar() {
     li.children[1].textContent = m.clases.length + (m.clases.length === 1 ? " clase" : " clases");
     lista.appendChild(li);
   });
-  const precio = $("[data-precio]");
-  if (estado.curso.precio > 0) {
-    precio.textContent = new Intl.NumberFormat("es-AR", { style: "currency", currency: estado.curso.moneda, maximumFractionDigits: 0 }).format(estado.curso.precio);
-    precio.hidden = false;
-  }
+  // El panel de compra vuelve a su lugar (puede haberse movido a "sin acceso")
+  $("[data-vista='entrar'] .paneles").append($("[data-form-comprar]"), $("[data-pedido-ok]"));
+  pintarPagos();
   $("[data-form-entrar]").hidden = false;
   $("[data-form-codigo]").hidden = true;
   vista("entrar");
@@ -125,36 +125,222 @@ $("[data-otro-mail]").addEventListener("click", () => {
   $("#mail-entrar").focus();
 });
 
-$("[data-form-comprar]").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const form = e.currentTarget;
-  comprar(form.email.value, $("[data-msj]", form), form);
+// ---------- Formas de pago ----------
+
+const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const formComprar = $("[data-form-comprar]");
+const msjComprar = $("[data-msj]", formComprar);
+
+function dinero(monto, moneda) {
+  if (moneda === "ARS") return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(monto);
+  return (moneda === "USDT" ? "USDT " : "USD ") + new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(monto);
+}
+
+function pintarPagos() {
+  const pagos = estado.pagos || {};
+  $$("[data-metodo]", formComprar).forEach((l) => {
+    const p = pagos[l.dataset.metodo];
+    l.hidden = !p;
+    if (p) $("[data-monto]", l).textContent = dinero(p.monto, p.moneda);
+  });
+  formComprar.hidden = false;
+  $("[data-pedido-ok]").hidden = true;
+  if (!Object.keys(pagos).length) mensaje(msjComprar, "La venta del curso abre muy pronto.");
+
+  datosPago($("[data-datos-transferencia]"), pagos.transferencia && [
+    ["Alias", pagos.transferencia.alias, true],
+    ["CBU / CVU", pagos.transferencia.cbu, true],
+    ["Titular", pagos.transferencia.titular],
+    ["Banco", pagos.transferencia.banco],
+    ["Monto", dinero(pagos.transferencia.monto, "ARS"), false, String(pagos.transferencia.monto)],
+  ]);
+  datosPago($("[data-datos-cripto]"), pagos.cripto && [
+    ["Red", pagos.cripto.red],
+    ["Dirección", pagos.cripto.direccion, true],
+    ["Monto", dinero(pagos.cripto.monto, "USDT"), false, String(pagos.cripto.monto)],
+  ]);
+}
+
+// Lista de datos con botón para copiar: [etiqueta, valor, copiable, valorACopiar]
+function datosPago(dl, filas) {
+  dl.innerHTML = "";
+  (filas || []).forEach(([etiqueta, valor, copiable, copia]) => {
+    if (!valor) return;
+    const dt = document.createElement("dt"), dd = document.createElement("dd");
+    dt.textContent = etiqueta;
+    const span = document.createElement("span");
+    span.textContent = valor;
+    dd.appendChild(span);
+    if (copiable || copia) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "copiar";
+      b.innerHTML = "<i class='ph ph-copy'></i><span>Copiar</span>";
+      b.setAttribute("aria-label", "Copiar " + etiqueta.toLowerCase());
+      b.addEventListener("click", async () => {
+        try { await navigator.clipboard.writeText(copia || valor); } catch (e) { return; }
+        b.lastChild.textContent = "Copiado";
+        setTimeout(() => (b.lastChild.textContent = "Copiar"), 1800);
+      });
+      dd.appendChild(b);
+    }
+    dl.append(dt, dd);
+  });
+}
+
+function emailCompra() {
+  const email = formComprar.email.value.trim().toLowerCase();
+  if (EMAIL_OK.test(email)) return email;
+  mensaje(msjComprar, "Primero escribí tu mail: es con el que vas a entrar al curso.", true);
+  formComprar.email.focus();
+  return null;
+}
+
+formComprar.addEventListener("submit", (e) => e.preventDefault());
+
+formComprar.addEventListener("change", (e) => {
+  if (e.target.name !== "metodo") return;
+  const m = e.target.value;
+  $$("[data-detalle]", formComprar).forEach((d) => (d.hidden = d.dataset.detalle !== m));
+  mensaje(msjComprar, "");
+  if (m === "paypal") montarPaypal();
 });
 
+$("[data-pagar-mp]").addEventListener("click", async (e) => {
+  const email = emailCompra();
+  if (!email) return;
+  const b = e.currentTarget;
+  ocupado(b, true);
+  try {
+    const r = await api("/api/comprar", { method: "POST", body: JSON.stringify({ email }) });
+    if (r.yaEsAlumno) { ocupado(b, false); return yaEsAlumno(email); }
+    mensaje(msjComprar, "Te llevamos a Mercado Pago…");
+    location.href = r.url;
+  } catch (err) {
+    ocupado(b, false);
+    mensaje(msjComprar, err.message, true);
+  }
+});
+
+$$("[data-enviar-pedido]").forEach((b) =>
+  b.addEventListener("click", async () => {
+    const email = emailCompra();
+    if (!email) return;
+    const metodo = b.dataset.enviarPedido, caja = b.closest("[data-detalle]");
+    const file = $("[data-archivo]", caja).files[0];
+    const referencia = ($("[data-referencia]", caja) || {}).value || "";
+    if (metodo === "transferencia" && !file) return mensaje(msjComprar, "Subí el comprobante de la transferencia.", true);
+    if (metodo === "cripto" && !file && referencia.trim().length < 10) return mensaje(msjComprar, "Pegá el ID de la transacción o subí una captura.", true);
+    ocupado(b, true);
+    mensaje(msjComprar, "Enviando…");
+    try {
+      const archivo = file ? await leerArchivo(file) : null;
+      const r = await api("/api/pedido", { method: "POST", body: JSON.stringify({ email, metodo, referencia, archivo }) });
+      if (r.yaEsAlumno) return yaEsAlumno(email);
+      listo("¡Recibimos tu aviso!", "Vamos a confirmar el pago, normalmente en el día. Cuando esté, te llega un mail a ", email, " para entrar al curso.", true);
+    } catch (err) {
+      mensaje(msjComprar, err.message, true);
+    } finally {
+      ocupado(b, false);
+    }
+  })
+);
+
+// PayPal: los botones se cargan sólo cuando alguien elige esta opción.
+let paypalMontado = false;
+function montarPaypal() {
+  if (paypalMontado) return;
+  paypalMontado = true;
+  const p = estado.pagos.paypal, caja = $("[data-paypal-botones]");
+  const s = document.createElement("script");
+  s.src = "https://www.paypal.com/sdk/js?client-id=" + encodeURIComponent(p.clientId) + "&currency=USD&intent=capture&components=buttons&enable-funding=card&disable-funding=paylater,venmo";
+  s.onerror = () => { paypalMontado = false; mensaje(msjComprar, "No pudimos cargar PayPal. Revisá tu conexión y elegí la opción de nuevo.", true); };
+  s.onload = () => {
+    let email = null;
+    window.paypal.Buttons({
+      style: { layout: "vertical", shape: "pill", label: "pay" },
+      onClick: (data, actions) => ((email = emailCompra()) ? actions.resolve() : actions.reject()),
+      createOrder: async () => {
+        const r = await api("/api/paypal-crear", { method: "POST", body: JSON.stringify({ email }) });
+        if (r.yaEsAlumno) { yaEsAlumno(email); throw new Error("ya es alumno"); }
+        return r.id;
+      },
+      onApprove: async (data, actions) => {
+        mensaje(msjComprar, "Confirmando el pago…");
+        try {
+          await api("/api/paypal-capturar", { method: "POST", body: JSON.stringify({ orderId: data.orderID }) });
+        } catch (err) {
+          if (err.datos && err.datos.reintentar) return actions.restart();
+          return mensaje(msjComprar, err.message, true);
+        }
+        if (estado.usuario && estado.usuario.email === email) return cargar();
+        $("#mail-entrar").value = email;
+        listo("¡Listo, ya tenés el curso!", "Te mandamos un mail a ", email, ". También podés entrar ahora mismo con ese mail en “Ya lo compré”.");
+      },
+      onError: (err) => {
+        if (String(err && err.message).includes("ya es alumno")) return;
+        console.error(err);
+        mensaje(msjComprar, "PayPal tuvo un problema. Probá de nuevo o elegí otra forma de pago.", true);
+      },
+    }).render(caja);
+  };
+  document.head.appendChild(s);
+}
+
+function yaEsAlumno(email) {
+  $("#mail-entrar").value = email;
+  mensaje(msjComprar, "Ese mail ya tiene el curso. Entrá con él en “Ya lo compré”.");
+}
+
+function listo(titulo, antes, email, despues, conWhatsapp) {
+  const ok = $("[data-pedido-ok]");
+  $("h2", ok).textContent = titulo;
+  const p = $("p", ok);
+  p.textContent = antes;
+  const b = document.createElement("b");
+  b.textContent = email;
+  p.append(b, despues);
+  $("a", ok).hidden = !conWhatsapp;
+  formComprar.hidden = true;
+  ok.hidden = false;
+  ok.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+// Lee el comprobante como base64. Las fotos grandes se achican antes de mandarlas.
+async function leerArchivo(file) {
+  let blob = file, tipo = file.type || "application/octet-stream";
+  if (/^image\/(jpeg|png|webp)$/.test(tipo) && file.size > 1.5 * 1024 * 1024) {
+    try {
+      const img = await createImageBitmap(file);
+      const k = Math.min(1, 1800 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k);
+      c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      blob = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.85));
+      tipo = "image/jpeg";
+    } catch (e) {}
+  }
+  if (blob.size > 4 * 1024 * 1024) throw new Error("El comprobante pesa demasiado (máximo 4 MB). Probá con una captura de pantalla.");
+  const base64 = await new Promise((ok, mal) => {
+    const fr = new FileReader();
+    fr.onload = () => ok(String(fr.result).split(",")[1]);
+    fr.onerror = mal;
+    fr.readAsDataURL(blob);
+  });
+  return { nombre: file.name, tipo, base64 };
+}
+
+// Con sesión pero sin el curso: el panel de compra aparece ahí mismo, con su mail.
 $("[data-comprar-actual]").addEventListener("click", (e) => {
-  comprar(estado.usuario.email, $("[data-msj-sin-acceso]"), e.currentTarget);
+  e.currentTarget.hidden = true;
+  formComprar.email.value = estado.usuario.email;
+  pintarPagos();
+  $("[data-comprar-aqui]").append(formComprar, $("[data-pedido-ok]"));
+  formComprar.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 $("[data-reintentar]").addEventListener("click", () => cargar());
-
-async function comprar(email, msj, control) {
-  email = String(email || "").trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mensaje(msj, "Revisá el mail: parece que tiene un error.", true);
-  ocupado(control, true);
-  try {
-    const r = await api("/api/comprar", { method: "POST", body: JSON.stringify({ email }) });
-    if (r.yaEsAlumno) {
-      ocupado(control, false);
-      $("#mail-entrar").value = email;
-      return mensaje(msj, "Ese mail ya tiene el curso. Entrá con él en “Ya lo compré”.");
-    }
-    mensaje(msj, "Te llevamos a Mercado Pago…");
-    location.href = r.url;
-  } catch (err) {
-    ocupado(control, false);
-    mensaje(msj, err.message, true);
-  }
-}
 
 $$("[data-salir]").forEach((b) =>
   b.addEventListener("click", async () => {

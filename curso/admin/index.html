@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel del curso | La que dió el mal paso</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../curso.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="../../" aria-label="La que dió el mal paso, inicio">
+      <i class="mark m-isotipo" aria-hidden="true"></i>
+      <span>Panel del curso</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        <li><a href="../">Ir al aula</a></li>
+      </ul>
+    </nav>
+    <div class="cuenta"><span class="cuenta-mail" data-mail></span></div>
+  </div>
+</header>
+
+<main class="aula-main">
+  <div class="wrap">
+    <section class="vista" data-vista="cargando" aria-busy="true">
+      <p class="cargando"><i class="mark m-isotipo" aria-hidden="true"></i>Abriendo el panel…</p>
+    </section>
+
+    <section class="vista sin-acceso" data-vista="sin-permiso" hidden>
+      <i class="mark m-flor" aria-hidden="true"></i>
+      <h1 data-titulo-permiso>Entrá primero</h1>
+      <p class="lead" data-texto-permiso>Para usar el panel, entrá en el aula con tu mail de administradora y volvé a esta página.</p>
+      <div class="actions"><a class="btn btn-primary" href="../">Ir a entrar</a></div>
+    </section>
+
+    <section class="vista panel" data-vista="panel" hidden>
+      <div class="panel-cabeza">
+        <div>
+          <span class="eyebrow">Administración</span>
+          <h1>Panel del curso</h1>
+        </div>
+        <ul class="cifras">
+          <li><b data-total-alumnos>0</b><span>alumnos</span></li>
+          <li><b data-total-pendientes>0</b><span>pagos para revisar</span></li>
+        </ul>
+      </div>
+
+      <div class="panel-grilla">
+        <section class="bloque">
+          <h2>Pagos para revisar</h2>
+          <p class="muted">Transferencias y cripto. Fijate en tu banco o billetera que el dinero haya llegado antes de aprobar.</p>
+          <div class="pedidos" data-pedidos></div>
+        </section>
+
+        <div class="columna">
+          <form class="bloque" data-form-acceso novalidate>
+            <h2>Dar acceso a mano</h2>
+            <p class="muted">Para regalos, pagos fuera de la web o alumnos de Hotmart. Podés pegar varios mails, uno por línea.</p>
+            <label for="mails">Mails</label>
+            <textarea id="mails" name="mails" rows="4" placeholder="alguien@gmail.com&#10;otra@hotmail.com" spellcheck="false"></textarea>
+            <label for="origen">Origen</label>
+            <select id="origen" name="origen">
+              <option value="manual">Manual / regalo</option>
+              <option value="hotmart">Compró en Hotmart</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Dar acceso <i class="ph ph-key"></i></button>
+            <p class="msj" data-msj aria-live="polite"></p>
+          </form>
+
+          <section class="bloque">
+            <h2>Últimos alumnos</h2>
+            <ul class="alumnos" data-alumnos></ul>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>La que dió el mal paso. Panel del curso.</span>
+    <div class="redes">
+      <button class="theme-toggle" type="button" aria-label="Cambiar modo claro u oscuro"><i class="ph ph-moon"></i></button>
+    </div>
+  </div>
+</footer>
+
+<script src="../../main.js"></script>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

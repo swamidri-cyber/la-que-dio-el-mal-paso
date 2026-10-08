@@ -25,6 +25,7 @@
       <ul>
         <li><a href="../productos.html">Productos</a></li>
         <li><a href="../#curso">El curso</a></li>
+        <li data-link-admin hidden><a href="admin/">Panel</a></li>
       </ul>
     </nav>
     <div class="cuenta">
@@ -74,13 +75,75 @@
 
         <form class="panel-acceso comprar" data-form-comprar novalidate>
           <h2>Todavía no lo tengo</h2>
-          <p>Pagás con Mercado Pago (tarjeta, débito, dinero en cuenta o efectivo). Cuando se acredita, el curso queda habilitado para el mail que pongas acá.</p>
-          <p class="precio" data-precio hidden></p>
+          <p>Elegí cómo pagar. El curso queda habilitado para el mail que pongas acá.</p>
           <label for="mail-comprar">Mail para entrar al curso</label>
           <input id="mail-comprar" type="email" name="email" autocomplete="email" inputmode="email" required placeholder="nombre@mail.com">
-          <button class="btn btn-primary" type="submit">Comprar con Mercado Pago <i class="ph ph-arrow-up-right"></i></button>
+
+          <fieldset class="metodos">
+            <legend>Forma de pago</legend>
+            <label class="metodo" data-metodo="mercadopago" hidden>
+              <input type="radio" name="metodo" value="mercadopago">
+              <i class="ph ph-credit-card" aria-hidden="true"></i>
+              <span><strong>Tarjeta, débito o efectivo</strong><small>Mercado Pago · en cuotas · Rapipago y Pago Fácil</small></span>
+              <b data-monto></b>
+            </label>
+            <label class="metodo" data-metodo="transferencia" hidden>
+              <input type="radio" name="metodo" value="transferencia">
+              <i class="ph ph-bank" aria-hidden="true"></i>
+              <span><strong>Transferencia bancaria</strong><small>Desde cualquier banco o billetera virtual</small></span>
+              <b data-monto></b>
+            </label>
+            <label class="metodo" data-metodo="paypal" hidden>
+              <input type="radio" name="metodo" value="paypal">
+              <i class="ph ph-globe-hemisphere-west" aria-hidden="true"></i>
+              <span><strong>Desde el exterior</strong><small>PayPal o tarjeta internacional</small></span>
+              <b data-monto></b>
+            </label>
+            <label class="metodo" data-metodo="cripto" hidden>
+              <input type="radio" name="metodo" value="cripto">
+              <i class="ph ph-currency-circle-dollar" aria-hidden="true"></i>
+              <span><strong>Cripto</strong><small>USDT</small></span>
+              <b data-monto></b>
+            </label>
+          </fieldset>
+
+          <div class="detalle" data-detalle="mercadopago" hidden>
+            <button class="btn btn-primary" type="button" data-pagar-mp>Pagar con Mercado Pago <i class="ph ph-arrow-up-right"></i></button>
+            <p class="nota">No hace falta tener cuenta de Mercado Pago. Si pagás en efectivo, el curso se habilita cuando se acredita.</p>
+          </div>
+
+          <div class="detalle" data-detalle="transferencia" hidden>
+            <dl class="datos-pago" data-datos-transferencia></dl>
+            <label for="comprobante-transf">Después de transferir, subí el comprobante (foto o PDF)</label>
+            <input id="comprobante-transf" class="archivo" type="file" accept="image/*,application/pdf" data-archivo>
+            <button class="btn btn-primary" type="button" data-enviar-pedido="transferencia">Enviar comprobante <i class="ph ph-paper-plane-tilt"></i></button>
+            <p class="nota">Lo revisamos a mano, normalmente en el día. Cuando lo confirmamos te llega un mail para entrar.</p>
+          </div>
+
+          <div class="detalle" data-detalle="paypal" hidden>
+            <div class="paypal-botones" data-paypal-botones></div>
+            <p class="nota">Podés pagar con tu cuenta de PayPal o con tarjeta, sin crear cuenta. El acceso es inmediato.</p>
+          </div>
+
+          <div class="detalle" data-detalle="cripto" hidden>
+            <dl class="datos-pago" data-datos-cripto></dl>
+            <p class="nota alerta"><i class="ph ph-warning" aria-hidden="true"></i>Mandá sólo USDT y sólo por la red indicada. Si usás otra red, el dinero se pierde.</p>
+            <label for="hash-cripto">ID de la transacción (hash)</label>
+            <input id="hash-cripto" name="referencia" autocomplete="off" spellcheck="false" placeholder="Pegalo acá" data-referencia>
+            <label for="comprobante-cripto">O una captura del envío (opcional)</label>
+            <input id="comprobante-cripto" class="archivo" type="file" accept="image/*,application/pdf" data-archivo>
+            <button class="btn btn-primary" type="button" data-enviar-pedido="cripto">Avisar el pago <i class="ph ph-paper-plane-tilt"></i></button>
+          </div>
+
           <p class="msj" data-msj aria-live="polite"></p>
         </form>
+
+        <div class="panel-acceso comprar recibido" data-pedido-ok hidden>
+          <i class="mark m-flor" aria-hidden="true"></i>
+          <h2>¡Recibimos tu aviso!</h2>
+          <p>Vamos a confirmar el pago, normalmente en el día. Cuando esté, te llega un mail a <b data-mail-pedido></b> para entrar al curso.</p>
+          <a class="btn btn-ghost" href="https://wa.link/djo13e" target="_blank" rel="noopener"><i class="ph ph-whatsapp-logo"></i> Avisanos por WhatsApp</a>
+        </div>
       </div>
     </section>
 
@@ -94,7 +157,7 @@
         <button class="btn btn-primary" type="button" data-comprar-actual>Comprar el curso con este mail</button>
         <button class="btn btn-ghost" type="button" data-salir>Entrar con otro mail</button>
       </div>
-      <p class="msj" data-msj-sin-acceso aria-live="polite"></p>
+      <div class="paneles" data-comprar-aqui></div>
       <p class="ayuda">¿Ya pagaste y no podés entrar? <a href="https://wa.link/djo13e" target="_blank" rel="noopener">Escribinos por WhatsApp</a>.</p>
     </section>
 

@@ -1,0 +1,8 @@
+{
+  "name": "la-que-dio-el-mal-paso",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

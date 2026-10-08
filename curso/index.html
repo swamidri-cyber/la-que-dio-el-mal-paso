@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Curso de sahumerios | La que dió el mal paso</title>
+<meta name="description" content="Aula del curso integral de sahumerios artesanales.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="curso.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="La que dió el mal paso, inicio">
+      <i class="mark m-isotipo" aria-hidden="true"></i>
+      <span>La que dió el mal paso</span>
+    </a>
+    <nav aria-label="Principal">
+      <ul>
+        <li><a href="../productos.html">Productos</a></li>
+        <li><a href="../#curso">El curso</a></li>
+      </ul>
+    </nav>
+    <div class="cuenta">
+      <span class="cuenta-mail" data-mail hidden></span>
+      <button class="btn btn-ghost" type="button" data-salir hidden>Salir</button>
+    </div>
+  </div>
+</header>
+
+<main class="aula-main">
+  <div class="wrap">
+    <div class="aviso-pago" data-aviso hidden role="status"></div>
+
+    <!-- Cargando -->
+    <section class="vista" data-vista="cargando" aria-busy="true">
+      <p class="cargando"><i class="mark m-isotipo" aria-hidden="true"></i>Abriendo el aula…</p>
+    </section>
+
+    <!-- Sin sesión: entrar o comprar -->
+    <section class="vista entrar" data-vista="entrar" hidden>
+      <div class="entrar-intro">
+        <span class="eyebrow">Curso online</span>
+        <h1>Curso integral de sahumerios artesanales</h1>
+        <p class="lead">11 clases en video, 4 técnicas y 2 bonos descargables. Lo ves cuando quieras, desde la compu o el celular.</p>
+        <ol class="temario-mini" data-temario-mini></ol>
+      </div>
+
+      <div class="paneles">
+        <form class="panel-acceso" data-form-entrar novalidate>
+          <h2>Ya lo compré</h2>
+          <p>Escribí el mail con el que compraste y te mandamos un enlace para entrar. No hace falta contraseña.</p>
+          <label for="mail-entrar">Tu mail</label>
+          <input id="mail-entrar" type="email" name="email" autocomplete="email" inputmode="email" required placeholder="nombre@mail.com">
+          <button class="btn btn-primary" type="submit">Mandame el enlace <i class="ph ph-paper-plane-tilt"></i></button>
+          <p class="msj" data-msj aria-live="polite"></p>
+        </form>
+
+        <form class="panel-acceso codigo" data-form-codigo hidden novalidate>
+          <h2>Revisá tu mail</h2>
+          <p>Te mandamos un enlace a <b data-mail-enviado></b>. Tocalo desde este dispositivo, o escribí acá el código de 6 números que viene en el mismo mail.</p>
+          <label for="codigo">Código</label>
+          <input id="codigo" name="codigo" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="8" required placeholder="123456">
+          <button class="btn btn-primary" type="submit">Entrar</button>
+          <button class="link" type="button" data-otro-mail>Usar otro mail</button>
+          <p class="msj" data-msj aria-live="polite"></p>
+        </form>
+
+        <form class="panel-acceso comprar" data-form-comprar novalidate>
+          <h2>Todavía no lo tengo</h2>
+          <p>Pagás con Mercado Pago (tarjeta, débito, dinero en cuenta o efectivo). Cuando se acredita, el curso queda habilitado para el mail que pongas acá.</p>
+          <p class="precio" data-precio hidden></p>
+          <label for="mail-comprar">Mail para entrar al curso</label>
+          <input id="mail-comprar" type="email" name="email" autocomplete="email" inputmode="email" required placeholder="nombre@mail.com">
+          <button class="btn btn-primary" type="submit">Comprar con Mercado Pago <i class="ph ph-arrow-up-right"></i></button>
+          <p class="msj" data-msj aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Con sesión pero sin el curso -->
+    <section class="vista sin-acceso" data-vista="sin-acceso" hidden>
+      <i class="mark m-flor" aria-hidden="true"></i>
+      <h1>Este mail no tiene el curso</h1>
+      <p class="lead">Entraste como <b data-mail-actual></b>, pero no encontramos una compra con ese mail. Si compraste con otro, salí y entrá con ese.</p>
+      <p class="lead">Si recién pagaste, esperá un minuto y <button class="link" type="button" data-reintentar>volvé a revisar</button>.</p>
+      <div class="actions">
+        <button class="btn btn-primary" type="button" data-comprar-actual>Comprar el curso con este mail</button>
+        <button class="btn btn-ghost" type="button" data-salir>Entrar con otro mail</button>
+      </div>
+      <p class="msj" data-msj-sin-acceso aria-live="polite"></p>
+      <p class="ayuda">¿Ya pagaste y no podés entrar? <a href="https://wa.link/djo13e" target="_blank" rel="noopener">Escribinos por WhatsApp</a>.</p>
+    </section>
+
+    <!-- Aula -->
+    <section class="vista aula" data-vista="aula" hidden>
+      <div class="reproductor">
+        <div class="pantalla" data-pantalla>
+          <div class="pantalla-vacia" data-pantalla-vacia>
+            <i class="mark m-espiral4" aria-hidden="true"></i>
+            <p>Elegí una clase para empezar.</p>
+          </div>
+        </div>
+        <div class="clase-info">
+          <span class="eyebrow" data-clase-modulo></span>
+          <h1 data-clase-titulo>Bienvenida al aula</h1>
+          <div class="clase-acciones">
+            <button class="btn btn-ghost" type="button" data-anterior><i class="ph ph-arrow-left"></i> Anterior</button>
+            <button class="btn btn-ghost visto" type="button" data-visto aria-pressed="false"><i class="ph ph-check-circle"></i> <span>Marcar como vista</span></button>
+            <button class="btn btn-primary" type="button" data-siguiente>Siguiente <i class="ph ph-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="lateral">
+        <div class="progreso">
+          <div class="progreso-txt"><span>Tu avance</span><b data-progreso-txt>0 de 11</b></div>
+          <div class="barra"><span data-progreso-barra></span></div>
+        </div>
+        <nav class="temario" data-temario aria-label="Clases del curso"></nav>
+        <div class="bonos-aula">
+          <h2>Bonos</h2>
+          <div data-bonos></div>
+        </div>
+      </aside>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>La que dió el mal paso. Sahumerios artesanales, Rosario.</span>
+    <div class="redes">
+      <a href="https://www.instagram.com/laquedioelmalpaso/" target="_blank" rel="noopener" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+      <a href="https://wa.link/djo13e" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo"></i></a>
+      <button class="theme-toggle" type="button" aria-label="Cambiar modo claro u oscuro"><i class="ph ph-moon"></i></button>
+    </div>
+  </div>
+</footer>
+
+<script src="../main.js"></script>
+<script type="module" src="curso.js"></script>
+</body>
+</html>

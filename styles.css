@@ -263,6 +263,8 @@ h3 { font-family: var(--display); font-weight: 400; font-size: 1.75rem; line-hei
 .bono small { color: var(--c-soft); font-size: .88rem; }
 .curso-box .btn-primary { background: #efebe0; color: #45443a; }
 .curso-box .btn-primary:hover { background: #fff8ec; }
+.curso-box .btn-aula { border-color: var(--c-line); color: var(--c-ink); }
+.curso-box .btn-aula:hover { background: var(--c-ink); color: var(--c-bg); border-color: var(--c-ink); }
 .acceso { margin: 1.1rem 0 0; font-size: .9rem; color: var(--c-soft); max-width: 44ch; display: flex; gap: .6rem; }
 .acceso i { font-size: 1.1rem; margin-top: 2px; }
 

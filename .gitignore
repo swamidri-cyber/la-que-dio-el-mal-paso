@@ -1,3 +1,7 @@
 fotos productos/
 bonos/
 reel/
+node_modules/
+.env
+.env.local
+.vercel/

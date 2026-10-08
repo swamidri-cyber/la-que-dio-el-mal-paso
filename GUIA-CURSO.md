@@ -48,8 +48,15 @@ Hacé los pasos en este orden. Cada clave que copies va a parar al paso 5.
    - `guia-del-taller.pdf`
 
    Si tienen otra extensión, avisame y cambio el nombre en `lib/curso.js`.
-7. **Project Settings > API**: copiá *Project URL*, la clave *anon public* y la
-   *service_role*. La *service_role* es secreta: no la mandes por chat ni la subas a GitHub.
+7. **Las claves** (en el menú de la izquierda, **Project Settings**):
+   - **Dirección del proyecto**: en *Data API* aparece como `https://xxxx.supabase.co/rest/v1/`.
+     Copiala **sin** el `/rest/v1/` del final: `https://xxxx.supabase.co`.
+   - En **API Keys**, usá las claves nuevas (no las "legacy"):
+     - **Publishable key** (empieza con `sb_publishable_`): es pública.
+     - **Secret key** (empieza con `sb_secret_`): tocá *Reveal* para verla. **Es secreta**:
+       no la mandes por chat ni la subas a GitHub; va directo a Netlify.
+   - Después, en **API Keys > Legacy API Keys**, tocá **Disable JWT-based API keys**.
+     Así las claves viejas (`anon` y `service_role`, las que empiezan con `eyJ...`) dejan de servir.
 
 ## 2. Bunny Stream (videos)
 
@@ -118,9 +125,9 @@ variables (están también en `.env.example`):
 | `CURSO_PRECIO` | Precio en pesos, sólo el número. Ej: `25000` |
 | `CURSO_PRECIO_USD` | Precio en dólares para PayPal y cripto. Ej: `30` |
 | `ADMIN_EMAILS` | `laquedioelmalpaso2020@gmail.com` (quién puede usar el panel) |
-| `SUPABASE_URL` | Project URL de Supabase |
-| `SUPABASE_ANON_KEY` | Clave anon public |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clave service_role (secreta) |
+| `SUPABASE_URL` | Dirección del proyecto, ej. `https://xxxx.supabase.co` |
+| `SUPABASE_ANON_KEY` | Publishable key (`sb_publishable_...`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Secret key (`sb_secret_...`, secreta) |
 | `MP_ACCESS_TOKEN` | Access Token de producción de Mercado Pago |
 | `MP_WEBHOOK_SECRET` | Clave secreta del webhook |
 | `BUNNY_LIBRARY_ID` | Library ID de Bunny |

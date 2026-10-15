@@ -1,6 +1,6 @@
 /* Service worker: guarda la app en el celular para que funcione sin internet.
    Al cambiar archivos, subí el número de VERSION para que se actualice. */
-const VERSION = 'costos-v2';
+const VERSION = 'costos-icon-2';
 const FILES = [
   './',
   './index.html',

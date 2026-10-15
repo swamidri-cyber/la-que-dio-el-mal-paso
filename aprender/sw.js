@@ -1,6 +1,6 @@
 /* Service worker: guarda la app en el celular para que funcione sin internet.
    Si cambiás archivos, subí el número de VERSION para que los celulares se actualicen. */
-const VERSION = 'aprender-v1';
+const VERSION = 'aprender-v3';
 const FILES = [
   './',
   './index.html',
